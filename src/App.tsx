@@ -46,6 +46,8 @@ const App = () => {
         })
 
         setData(data)
+      } catch {
+        console.log("Fail")
       } finally {
         setLoading(false)
         webR.destroy(rnorm)
