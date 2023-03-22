@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react"
-import { LineChart, Line } from "recharts"
-import reactLogo from "./assets/react.svg"
-import viteLogo from "/vite.svg"
+import {
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts"
 import "./App.css"
 import { WebR } from "@r-wasm/webr"
-import { WebRDataJsAtomic } from "@r-wasm/webr/robj"
+import { WebRDataJsNode, WebRDataJsAtomic } from "@r-wasm/webr/robj"
+import { Spinner } from "./components/Spinner"
 const webR = new WebR()
 
-function App() {
-  const [result, updateResult] = useState<(number | null)[]>()
-  const data = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }]
+const App = () => {
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<{ x: number | null; y: number | null }[]>()
 
   useEffect(() => {
     async function installPackage() {
@@ -17,7 +24,7 @@ function App() {
       await webR.installPackages(["dplyr"])
       await webR.evalR("library(dplyr)")
     }
-    installPackage()
+    //installPackage()
   }, [])
 
   useEffect(() => {
@@ -25,10 +32,22 @@ function App() {
       await webR.init()
       const rnorm = await webR.evalR("iris")
       try {
-        const result = (await rnorm.toJs()) as WebRDataJsAtomic<number>
-        console.log(result)
-        updateResult(result.values)
+        const result = (await rnorm.toJs()) as WebRDataJsNode
+        const column1 = result.values[0] as WebRDataJsAtomic<number>
+        const column2 = result.values[1] as WebRDataJsAtomic<number>
+
+        console.log(result.names)
+
+        const data = column1.values.map((x, i) => {
+          return {
+            x: x,
+            y: column2.values[i],
+          }
+        })
+
+        setData(data)
       } finally {
+        setLoading(false)
         webR.destroy(rnorm)
       }
     }
@@ -37,21 +56,17 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <p>Result of running R code: {result && result.join(",")}</p>
-      </div>
-      <LineChart width={400} height={400} data={data}>
-        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-      </LineChart>
+      <h1>Vite + React + TypeScript + WebR</h1>
+      <ResponsiveContainer width="100%" height={400}>
+        <ScatterChart>
+          <CartesianGrid />
+          <XAxis type="number" dataKey="x" name="Sepal.Length" />
+          <YAxis type="number" dataKey="y" name="Sepal.Width" />
+          <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+          <Scatter name="Sepal Scatter Plot" data={data} fill="#8884d8" />
+        </ScatterChart>
+      </ResponsiveContainer>
+      {loading && <Spinner />}
     </div>
   )
 }
