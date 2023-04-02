@@ -3,14 +3,20 @@ import { ScatterPlot } from "./components/ScatterPlot"
 
 const App = () => {
   return (
-    <div className="p-8 m-auto" style={{ maxWidth: "1000px" }}>
-      <h1 className="m-5 text-4xl font-bold text-center">
+    <div className="my-8 p-8 m-auto" style={{ maxWidth: "768px" }}>
+      <h1 className="my-5 text-4xl font-bold text-center">
         Vite + React + TypeScript + WebR
       </h1>
-      <div style={{ height: "400px" }}>
-        <Histogram dataSet="iris" />
+      <div>
+        <h2 className="my-5 text-2xl font-bold">Histogram</h2>
+        <div style={{ height: "450px" }}>
+          <Histogram dataSet="iris" />
+        </div>
       </div>
-      {/* <ScatterPlot dataSet="iris" /> */}
+      <div style={{ height: "500px" }}>
+        <h2 className="my-5 text-2xl font-bold">Scatter plot</h2>
+        <ScatterPlot dataSet="iris" />
+      </div>
     </div>
   )
 }

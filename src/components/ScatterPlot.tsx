@@ -2,19 +2,21 @@ import { WebR } from "@r-wasm/webr"
 import { WebRDataJsNode, WebRDataJsAtomic } from "@r-wasm/webr/robj"
 import { useEffect, useState, ChangeEvent } from "react"
 import {
-  ResponsiveContainer,
-  ScatterChart,
-  Scatter,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Label,
+  Chart,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
   Tooltip,
-} from "recharts"
+  Legend,
+} from "chart.js"
+import { Scatter } from "react-chartjs-2"
 import { Select } from "./Select"
 import { Spinner } from "./Spinner"
 
 const webR = new WebR()
+
+Chart.register(CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend)
 
 type ScatterPlotProps = {
   dataSet: string
@@ -93,33 +95,52 @@ const ScatterPlot = (props: ScatterPlotProps) => {
   }
 
   return (
-    <div className="">
-      <div className="p-3" style={{ height: "500px", maxWidth: "800px" }}>
-        <ResponsiveContainer>
-          <ScatterChart margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" domain={["dataMin", "dataMax"]}>
-              <Label value={xColumn} position="insideBottom" offset={-10} />
-            </XAxis>
-            <YAxis type="number" dataKey="y" domain={["dataMin", "dataMax"]}>
-              <Label
-                value={yColumn}
-                position="insideLeft"
-                angle={-90}
-                offset={0}
-              />
-            </YAxis>
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter
-              name="Sepal Scatter Plot"
-              data={scatterData}
-              fill="#8884d8"
-            />
-          </ScatterChart>
-        </ResponsiveContainer>
+    <div className="h-full">
+      <Scatter
+        className=""
+        options={{
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: xColumn,
+              },
+              type: "linear",
+              offset: false,
+              grid: {
+                offset: false,
+              },
+              ticks: {
+                stepSize: 1,
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: yColumn,
+              },
+            },
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {},
+            },
+          },
+        }}
+        data={{
+          labels: ["x", "y", "z"],
+          datasets: [
+            {
+              label: dataSet,
+              data: scatterData,
+            },
+          ],
+        }}
+      />
 
-        {isLoading && <Spinner />}
-      </div>
+      {isLoading && <Spinner />}
+
       {xColumn && yColumn && (
         <div className="min-w-0">
           <Select

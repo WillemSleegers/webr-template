@@ -9,22 +9,26 @@ import {
   Title,
   Tooltip,
   Legend,
+  Colors,
 } from "chart.js"
 import { Bar } from "react-chartjs-2"
 import { Select } from "./Select"
 import { Spinner } from "./Spinner"
 
-Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Colors
+)
 
 const webR = new WebR()
 
 type HistogramProps = {
   dataSet: string
-}
-
-type dataProps = {
-  labels: string[]
-  datasets: { label: string; data: number[] }[]
 }
 
 const Histogram = (props: HistogramProps) => {
@@ -42,6 +46,7 @@ const Histogram = (props: HistogramProps) => {
     const webRData = await webR.evalR(dataSet)
     try {
       const webRDataJs = (await webRData.toJs()) as WebRDataJsNode
+      console.log(webRDataJs)
       setData(webRDataJs)
     } finally {
       webR.destroy(webRData)
@@ -104,6 +109,7 @@ const Histogram = (props: HistogramProps) => {
   return (
     <div className="h-full">
       <Bar
+        className=""
         options={{
           responsive: true,
           scales: {
@@ -141,6 +147,7 @@ const Histogram = (props: HistogramProps) => {
             {
               label: "Count",
               data: plotData,
+
               borderWidth: 0,
               barPercentage: 1,
               categoryPercentage: 1,
@@ -149,18 +156,17 @@ const Histogram = (props: HistogramProps) => {
           ],
         }}
       />
-
-      {column && (
-        <div className="min-w-0">
+      <div>
+        {column && (
           <Select
             label="X:"
             options={columnNames}
             defaultOption={column}
             handleChange={handleColumn}
           />
-        </div>
-      )}
-      {isLoading && <Spinner />}
+        )}
+        {isLoading && <Spinner />}
+      </div>
     </div>
   )
 }
