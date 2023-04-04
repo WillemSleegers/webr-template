@@ -1,7 +1,7 @@
 import { WebR } from "@r-wasm/webr"
 import { WebRDataJsAtomic, WebRDataJsNode } from "@r-wasm/webr/robj"
 import { useEffect, useState } from "react"
-import { Column, useTable, usePagination } from "react-table"
+import { useTable, usePagination } from "react-table"
 
 type TableProps = {
   webR: WebR
