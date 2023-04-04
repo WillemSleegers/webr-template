@@ -47,6 +47,7 @@ const Histogram = (props: HistogramProps) => {
     )
     try {
       const webRDataJs = (await webRData.toJs()) as WebRDataJsNode
+      console.log(webRDataJs)
       const counts = webRDataJs.values[1] as WebRDataJsAtomic<number>
       const mids = webRDataJs.values[3] as WebRDataJsAtomic<number>
 
