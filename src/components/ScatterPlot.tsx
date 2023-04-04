@@ -14,16 +14,15 @@ import { Scatter } from "react-chartjs-2"
 import { Select } from "./Select"
 import { Spinner } from "./Spinner"
 
-const webR = new WebR()
-
 Chart.register(CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend)
 
 type ScatterPlotProps = {
+  webR: WebR
   dataSet: string
 }
 
 const ScatterPlot = (props: ScatterPlotProps) => {
-  const { dataSet } = props
+  const { webR, dataSet } = props
 
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState<WebRDataJsNode>()

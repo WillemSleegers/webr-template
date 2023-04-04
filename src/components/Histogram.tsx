@@ -25,14 +25,13 @@ Chart.register(
   Colors
 )
 
-const webR = new WebR()
-
 type HistogramProps = {
+  webR: WebR
   dataSet: string
 }
 
 const Histogram = (props: HistogramProps) => {
-  const { dataSet } = props
+  const { webR, dataSet } = props
 
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState<WebRDataJsNode>()
@@ -40,18 +39,6 @@ const Histogram = (props: HistogramProps) => {
   const [column, setColumn] = useState<string>()
   const [plotData, setPlotData] =
     useState<{ x: number | null; y: number | null }[]>()
-
-  async function loadData() {
-    await webR.init()
-    const webRData = await webR.evalR(dataSet)
-    try {
-      const webRDataJs = (await webRData.toJs()) as WebRDataJsNode
-      console.log(webRDataJs)
-      setData(webRDataJs)
-    } finally {
-      webR.destroy(webRData)
-    }
-  }
 
   async function loadHistogramData() {
     await webR.init()
@@ -78,6 +65,16 @@ const Histogram = (props: HistogramProps) => {
   }
 
   useEffect(() => {
+    async function loadData() {
+      await webR.init()
+      const webRData = await webR.evalR(dataSet)
+      try {
+        const webRDataJs = (await webRData.toJs()) as WebRDataJsNode
+        setData(webRDataJs)
+      } finally {
+        webR.destroy(webRData)
+      }
+    }
     loadData()
   }, [])
 

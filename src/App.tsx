@@ -1,6 +1,9 @@
+import { WebR } from "@r-wasm/webr"
 import { Histogram } from "./components/Histogram"
 import { ScatterPlot } from "./components/ScatterPlot"
 import { Table } from "./components/Table"
+
+const webR = new WebR()
 
 const App = () => {
   return (
@@ -11,18 +14,18 @@ const App = () => {
       <div>
         <h2 className="my-5 text-2xl font-bold">Table</h2>
         <div>
-          <Table />
+          <Table webR={webR} dataSet="iris" />
         </div>
       </div>
       <div>
         <h2 className="my-5 text-2xl font-bold">Histogram</h2>
         <div style={{ height: "450px" }}>
-          <Histogram dataSet="iris" />
+          <Histogram webR={webR} dataSet="iris" />
         </div>
       </div>
       <div style={{ height: "500px" }}>
         <h2 className="my-5 text-2xl font-bold">Scatter plot</h2>
-        <ScatterPlot dataSet="iris" />
+        <ScatterPlot webR={webR} dataSet="iris" />
       </div>
     </div>
   )
